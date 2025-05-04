@@ -7,7 +7,7 @@
 using namespace std;
 
 // Enumeración para las opciones del menú
-enum MenuOpciones { JUGAR = 1, INSTRUCCIONES, SALIR };
+enum MenuOpciones { JUGAR = 1, INSTRUCCIONES, CREDITOS, SALIR };
 
 // Constantes enumeradas para el estado del juego
 enum EstadosJuego { CONTINUAR, GANAR, PERDER };
