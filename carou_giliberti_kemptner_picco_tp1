@@ -1,0 +1,172 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <unistd.h> // Librería para usar sleep()
+
+using namespace std;
+
+// Enumeración para las opciones del menú
+enum MenuOpciones { JUGAR = 1, INSTRUCCIONES, SALIR };
+
+// Constantes enumeradas para el estado del juego
+enum EstadosJuego { CONTINUAR, GANAR, PERDER };
+
+// Prototipos de funciones
+void mostrarTitulo();
+void mostrarMenu();
+void mostrarInstrucciones();
+void iniciarJuego();
+void mostrarPregunta(const string& pregunta, const string opciones[], int respuestaCorrecta, int& vidas, bool& respuestaCorrectaFlag);
+void dibujarEscenario(int puertaActual, int vidas);
+
+int main() {
+    int opcion;
+    bool continuar = true;
+
+    while (continuar) {
+        system("clear"); // Limpia la pantalla
+        mostrarTitulo();
+        mostrarMenu();
+
+        cout << "\nElige una opción: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case JUGAR:
+                iniciarJuego();
+                break;
+            case INSTRUCCIONES:
+                mostrarInstrucciones();
+                break;
+            case SALIR:
+                continuar = false;
+                cout << "\n¡Gracias por jugar! Hasta pronto.\n";
+                break;
+            default:
+                cout << "\nOpción no válida. Intenta de nuevo.\n";
+                sleep(2);
+                break;
+        }
+    }
+
+    return 0;
+}
+
+void mostrarTitulo() {
+    cout << "**********************\n";
+    cout << "*                       AVENTURA ASCII                       *\n";
+    cout << "*              Una aventura épica en tu terminal             *\n";
+    cout << "**********************\n";
+}
+
+void mostrarMenu() {
+    cout << "\nMENÚ PRINCIPAL:\n";
+    cout << "1. Jugar\n";
+    cout << "2. Instrucciones\n";
+    cout << "3. Salir\n";
+}
+
+void mostrarInstrucciones() {
+    system("clear");
+    mostrarTitulo();
+    cout << "\nINSTRUCCIONES:\n";
+    cout << "1. Responde correctamente las preguntas para avanzar por las puertas.\n";
+    cout << "2. Si fallas, perderás una vida. Pierdes el juego al perder las 3 vidas.\n";
+    cout << "3. ¡Buena suerte y diviértete!\n";
+    cout << "\nPresiona ENTER para volver al menú...";
+    cin.ignore();
+    cin.get();
+}
+
+void iniciarJuego() {
+    system("clear");
+    mostrarTitulo();
+    cout << "\n¡Bienvenido a la aventura! Responde correctamente para avanzar.\n";
+
+    // Variables del juego
+    int vidas = 3;
+    int puertaActual = 1;
+    bool jugando = true;
+
+    // Preguntas del juego
+    string preguntas[] = {
+        "¿Cuál es la capital de Francia?",
+        "¿Cuánto es 7 * 8?",
+        "¿Qué idioma se habla en Brasil?",
+        "¿Cuántos continentes hay en el mundo?",
+        "¿Qué planeta es conocido como el planeta rojo?"
+    };
+
+    // Opciones de respuestas
+    string opciones[5][4] = {
+        { "1. Madrid", "2. Berlín", "3. París", "4. Roma" },
+        { "1. 54", "2. 56", "3. 49", "4. 64" },
+        { "1. Portugués", "2. Español", "3. Inglés", "4. Francés" },
+        { "1. 5", "2. 6", "3. 7", "4. 8" },
+        { "1. Júpiter", "2. Marte", "3. Venus", "4. Saturno" }
+    };
+
+    // Respuestas correctas
+    int respuestasCorrectas[] = { 3, 2, 1, 3, 2 };
+
+    while (jugando) {
+        system("clear");
+        dibujarEscenario(puertaActual, vidas);
+
+        // Mostrar la pregunta actual
+        bool respuestaCorrectaFlag = false;
+        mostrarPregunta(preguntas[puertaActual - 1], opciones[puertaActual - 1], respuestasCorrectas[puertaActual - 1], vidas, respuestaCorrectaFlag);
+
+        if (respuestaCorrectaFlag) {
+            puertaActual++;
+            if (puertaActual > 5) {
+                cout << "\n¡Felicidades! Has completado la aventura.\n";
+                jugando = false;
+            }
+        } else {
+            if (vidas <= 0) {
+                cout << "\n¡Has perdido todas tus vidas! El juego se reiniciará.\n";
+                sleep(3);
+                iniciarJuego(); // Reiniciar el juego
+                return;
+            }
+        }
+    }
+
+    cout << "\nVolviendo al menú principal...\n";
+    sleep(3);
+}
+
+void mostrarPregunta(const string& pregunta, const string opciones[], int respuestaCorrecta, int& vidas, bool& respuestaCorrectaFlag) {
+    cout << "\nPregunta: " << pregunta << "\n";
+    for (int i = 0; i < 4; i++) {
+        cout << opciones[i] << "\n";
+    }
+
+    int respuesta;
+    cout << "\nElige una opción (1-4): ";
+    cin >> respuesta;
+
+    if (respuesta == respuestaCorrecta) {
+        cout << "\n¡Correcto! Avanzaste a la siguiente puerta.\n";
+        respuestaCorrectaFlag = true;
+    } else {
+        cout << "\nIncorrecto. Pierdes 1 vida.\n";
+        vidas--;
+        respuestaCorrectaFlag = false;
+    }
+
+    sleep(2);
+}
+
+void dibujarEscenario(int puertaActual, int vidas) {
+    cout << "\n=========================================\n";
+    cout << "                ESCENARIO                \n";
+    cout << "=========================================\n";
+    cout << "|                                       |\n";
+    cout << "|        Puerta actual: " << puertaActual << "                     |\n";
+    cout << "|        Vidas restantes: " << vidas << "                   |\n";
+    cout << "|                                       |\n";
+    cout << "=========================================\n";
+}
